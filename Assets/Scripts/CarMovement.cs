@@ -6,8 +6,8 @@ public class CarMovement : MonoBehaviour
 {
     Rigidbody rb;
 
-    public Vector3 thrustForce = new Vector3(0f, 0f, 45f);
-    public Vector3 rotationTorque = new Vector3(0f, 8f, 0f);
+    public Vector3 thrustForce = new Vector3(0f, 0f, 60f);
+    public Vector3 rotationTorque = new Vector3(0f, 12f, 0f);
 
 
     public bool controlsEnabled;

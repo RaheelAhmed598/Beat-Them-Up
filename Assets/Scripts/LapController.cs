@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-public class LapController : MonoBehaviour
+using Photon.Realtime;
+using ExitGames.Client.Photon;
+using UnityEngine.UI;
+
+public class LapController : MonoBehaviourPun
 {
     private List<GameObject> LapTriggers = new List<GameObject>();
 
@@ -26,52 +30,47 @@ public class LapController : MonoBehaviour
 
     private void OnEnable()
     {
-        //PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
+        PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
     }
 
     private void OnDisable()
     {
-       // PhotonNetwork.NetworkingClient.EventReceived -= OnEvent;
+        PhotonNetwork.NetworkingClient.EventReceived -= OnEvent;
     }
+    
+    //whenever event race, this method called automatically 
+    void OnEvent(EventData photonEvent)
+    {
+        //showing the finish order number with the player nickname
+        if (photonEvent.Code == (byte)RaiseEventsCode.WhoFinishedEventCode)
+        {
+            object[] data = (object[])photonEvent.CustomData;
 
-    //void OnEvent(EventData photonEvent)
-    //{
+            string nickNameOfFinishedPlayer = (string)data[0];
 
-    //    if (photonEvent.Code == (byte)RaiseEventsCode.WhoFinishedEventCode)
-    //    {
-    //        object[] data = (object[])photonEvent.CustomData;
+            finishOrder = (int)data[1];
 
-    //        string nickNameOfFinishedPlayer = (string)data[0];
+            int viewID = (int)data[2];
 
-    //        finishOrder = (int)data[1];
+            Debug.Log(nickNameOfFinishedPlayer + " " + finishOrder);
 
-    //        int viewID = (int)data[2];
-
-    //        Debug.Log(nickNameOfFinishedPlayer + " " + finishOrder);
-
-    //        GameObject orderUITextGameObject = RacingModeGameManager.instance.FinishOrderUIGameObjects[finishOrder - 1];
-    //        orderUITextGameObject.SetActive(true);
-
-
-    //        if (viewID == photonView.ViewID)
-    //        {
-    //            // the player is actually me!
-    //            orderUITextGameObject.GetComponent<Text>().text = finishOrder + ". " + nickNameOfFinishedPlayer + "(YOU)";
-    //            orderUITextGameObject.GetComponent<Text>().color = Color.red;
-    //        }
-    //        else
-    //        {
-    //            orderUITextGameObject.GetComponent<Text>().text = finishOrder + ". " + nickNameOfFinishedPlayer;
-
-    //        }
+            GameObject orderUITextGameObject = RacingModeGameManager.instance.FinishOrderUIGameObjects[finishOrder - 1];
+            orderUITextGameObject.SetActive(true);
 
 
+            if (viewID == photonView.ViewID)
+            {
+                // the player is actually me!
+                orderUITextGameObject.GetComponent<Text>().text = finishOrder + ". " + "(YOU)" + nickNameOfFinishedPlayer;
+                orderUITextGameObject.GetComponent<Text>().color = Color.red;
+            }
+            else
+            {
+                orderUITextGameObject.GetComponent<Text>().text = finishOrder + ". " + nickNameOfFinishedPlayer;
 
-
-    //    }
-
-
-    //}
+            }
+        }
+    }
 
 
     private void OnTriggerEnter(Collider other)
@@ -85,7 +84,7 @@ public class LapController : MonoBehaviour
             if (other.name == "FinishTrigger")
             {
                 //game is finished.
-                //GameFinished();
+                GameFinished();
             }
 
 
@@ -100,30 +99,32 @@ public class LapController : MonoBehaviour
         GetComponent<PlayerSetup>().PlayerCamera.transform.parent = null;
         GetComponent<CarMovement>().enabled = false;
 
-    //    finishOrder += 1;
+        //the player who finished the game increase 1, 
+        //means those whocame in 1st,2nd,3rd
+        finishOrder += 1;
 
 
-    //    string nickName = photonView.Owner.NickName;
-    //    int viewID = photonView.ViewID;
+        string nickName = photonView.Owner.NickName;
+        int viewID = photonView.ViewID;
 
-    //    //event data
-    //    object[] data = new object[] { nickName, finishOrder, viewID };
+        //event data for all the player in current lobby
+        object[] data = new object[] { nickName, finishOrder, viewID };
 
-    //    RaiseEventOptions raiseEventOptions = new RaiseEventOptions
-    //    {
-    //        Receivers = ReceiverGroup.All,
-    //        CachingOption = EventCaching.AddToRoomCache
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.All,
+            CachingOption = EventCaching.AddToRoomCache
 
-    //    };
+        };
 
-    //    //send options
-    //    SendOptions sendOptions = new SendOptions
-    //    {
-    //        Reliability = false
+        //send options
+        SendOptions sendOptions = new SendOptions
+        {
+            Reliability = false
 
-    //    };
+        };
 
-    //    PhotonNetwork.RaiseEvent((byte)RaiseEventsCode.WhoFinishedEventCode, data, raiseEventOptions, sendOptions);
+        PhotonNetwork.RaiseEvent((byte)RaiseEventsCode.WhoFinishedEventCode, data, raiseEventOptions, sendOptions);
     }
 
 

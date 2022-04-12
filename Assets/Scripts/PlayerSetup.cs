@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using TMPro;
 
 //synchronizing movement of the player across the network
 public class PlayerSetup : MonoBehaviourPunCallbacks
 {
     public Camera PlayerCamera;
-  //  public TextMeshProUGUI PlayerNameText;
+    public TextMeshProUGUI PlayerNameText;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +25,7 @@ public class PlayerSetup : MonoBehaviourPunCallbacks
 
                 //enable carMovement script and camera
                 GetComponent<CarMovement>().enabled = true;
-              //  GetComponent<LapController>().enabled = true;
+                GetComponent<LapController>().enabled = true;
                 PlayerCamera.enabled = true;
 
             }
@@ -31,7 +33,7 @@ public class PlayerSetup : MonoBehaviourPunCallbacks
             {
                 //Player is remote. Disable CarMovement script and camera.
                 GetComponent<CarMovement>().enabled = false;
-                //GetComponent<LapController>().enabled = false;
+                GetComponent<LapController>().enabled = false;
                 PlayerCamera.enabled = false;
 
             }
@@ -62,24 +64,24 @@ public class PlayerSetup : MonoBehaviourPunCallbacks
 
 
 
-       // SetPlayerUI();
+       SetPlayerUI();
     }
 
+    //displaying player name above the car
+    private void SetPlayerUI()
+    {
+        if (PlayerNameText != null)
+        {
+            PlayerNameText.text = photonView.Owner.NickName;
 
-    //private void SetPlayerUI()
-    //{
-    //    if (PlayerNameText != null)
-    //    {
-    //        PlayerNameText.text = photonView.Owner.NickName;
-
-    //        if (photonView.IsMine)
-    //        {
-    //            PlayerNameText.gameObject.SetActive(false);
-    //        }
-    //    }
+            if (photonView.IsMine)
+            {
+                PlayerNameText.gameObject.SetActive(false);
+            }
+        }
 
 
 
-    //}
+    }
 
 }
