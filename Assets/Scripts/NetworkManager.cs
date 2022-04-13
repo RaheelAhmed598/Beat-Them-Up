@@ -41,9 +41,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public Image PanelBackground;
     public Sprite RacingBackground;
     public Sprite DeathRaceBackground;
-    //public GameObject[] PlayerSelectionUIGameObjects;
-    //public DeathRacePlayer[] DeathRacePlayers;
-    //public RacingPlayer[] RacingPlayers;
+    public GameObject[] PlayerSelectionUIGameObjects;
+    public DeathRacePlayer[] DeathRacePlayers;
+    public RacingPlayer[] RacingPlayers;
 
     //Random join room panel
     [Header("Join Random Room Panel")]
@@ -218,14 +218,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 GameModeText.text = "LET'S RACE!";
                 PanelBackground.sprite = RacingBackground;
 
+                //show car name in player selection UI
+                for (int i = 0; i < PlayerSelectionUIGameObjects.Length; i++)
+                {
+                    PlayerSelectionUIGameObjects[i].transform.Find("PlayerName").GetComponent<Text>().text = RacingPlayers[i].playerName;
+                    PlayerSelectionUIGameObjects[i].GetComponent<Image>().sprite = RacingPlayers[i].playerSprite;
+                    PlayerSelectionUIGameObjects[i].transform.Find("PlayerProperty").GetComponent<Text>().text = "";
 
-                //for (int i = 0; i < PlayerSelectionUIGameObjects.Length; i++)
-                //{
-                //    PlayerSelectionUIGameObjects[i].transform.Find("PlayerName").GetComponent<Text>().text = RacingPlayers[i].playerName;
-                //    PlayerSelectionUIGameObjects[i].GetComponent<Image>().sprite = RacingPlayers[i].playerSprite;
-                //    PlayerSelectionUIGameObjects[i].transform.Find("PlayerProperty").GetComponent<Text>().text = "";
-
-                //}
+                }
 
 
             }
@@ -238,14 +238,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 GameModeText.text = "DEATH RACE!";
                 PanelBackground.sprite = DeathRaceBackground;
 
-                //for (int i = 0; i < PlayerSelectionUIGameObjects.Length; i++)
-                //{
-                //    PlayerSelectionUIGameObjects[i].transform.Find("PlayerName").GetComponent<Text>().text = DeathRacePlayers[i].playerName;
-                //    PlayerSelectionUIGameObjects[i].GetComponent<Image>().sprite = DeathRacePlayers[i].playerSprite;
-                //    PlayerSelectionUIGameObjects[i].transform.Find("PlayerProperty").GetComponent<Text>().text = DeathRacePlayers[i].weaponName +
-                //        ": " + "Damage: " + DeathRacePlayers[i].damage + " FireRate: " + DeathRacePlayers[i].fireRate;
+                //show car with their attack rate and weapon in player selection UI
+                for (int i = 0; i < PlayerSelectionUIGameObjects.Length; i++)
+                {
+                    PlayerSelectionUIGameObjects[i].transform.Find("PlayerName").GetComponent<Text>().text = DeathRacePlayers[i].playerName;
+                    PlayerSelectionUIGameObjects[i].GetComponent<Image>().sprite = DeathRacePlayers[i].playerSprite;
+                    PlayerSelectionUIGameObjects[i].transform.Find("PlayerProperty").GetComponent<Text>().text = DeathRacePlayers[i].weaponName +
+                        ": " + "Damage: " + DeathRacePlayers[i].damage + " FireRate: " + DeathRacePlayers[i].fireRate;
 
-                //}
+                }
             }
 
 
